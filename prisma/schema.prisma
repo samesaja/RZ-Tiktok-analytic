@@ -1,0 +1,51 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model LiveSession {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  username    String
+  sessionId   String   @unique
+  startedAt   DateTime @default(now())
+  endedAt     DateTime?
+  isStreaming Boolean  @default(true)
+
+  finalScore          Float?
+  peakViewers         Int?
+  totalLikes          Int?
+  totalComments       Int?
+  totalGifts          Int?
+  totalGiftValue      Int?
+  totalJoins          Int?
+  totalFollows        Int?
+
+  metrics LiveMetrics[]
+
+  @@map("liveSessions")
+}
+
+model LiveMetrics {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionId String
+  timestamp DateTime @default(now())
+
+  viewers           Int
+  peakViewers       Int
+  engagementRate    Float
+  algorithmScore    Float
+  engagementVelocity Float
+  retentionRate     Float
+
+  totalLikes     Int
+  totalComments  Int
+  totalGifts     Int
+  totalGiftValue Int
+  totalJoins     Int
+  totalFollows   Int
+
+  session LiveSession @relation(fields: [sessionId], references: [sessionId])
+
+  @@index([sessionId, timestamp])
+  @@map("liveMetrics")
+}
