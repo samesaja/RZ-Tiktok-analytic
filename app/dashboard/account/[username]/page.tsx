@@ -181,13 +181,15 @@ export default function AccountDetailPage({ params }: PageProps) {
 
         {!loading && !error && data && data.sessions.length > 0 && (
           <>
-            <ScorePerSessionChart sessions={data.sessions} />
-            <EngagementRetentionChart sessions={data.sessions} />
             <GeminiInsight
               loading={geminiLoading}
               error={geminiError}
               analysis={geminiAnalysis}
             />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <ScorePerSessionChart sessions={data.sessions} />
+              <EngagementRetentionChart sessions={data.sessions} />
+            </div>
           </>
         )}
       </main>
@@ -240,7 +242,7 @@ function GeminiInsight({
 
   return (
     <Card className="p-4 border-slate-800 bg-slate-900/60 text-sm text-slate-200 space-y-2">
-      <div className="text-sm font-semibold">Insight AI (Gemini)</div>
+      <div className="text-sm font-semibold">Ringkasan Algoritma Akun (Gemini)</div>
       <div className="text-xs text-slate-400">
         Analisis otomatis berdasarkan data historis sesi live akun ini.
       </div>
