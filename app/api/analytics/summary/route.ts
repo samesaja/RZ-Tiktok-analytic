@@ -50,11 +50,13 @@ export async function GET() {
       peakViewers: number;
     };
 
-    const sessionAggs: SessionAgg[] = sessions.map((s) => {
-      const scores = s.metrics.map((m) => m.algorithmScore ?? 0);
-      const engagementRates = s.metrics.map((m) => m.engagementRate ?? 0);
-      const retentionRates = s.metrics.map((m) => m.retentionRate ?? 0);
-      const engagementVelocities = s.metrics.map((m) => m.engagementVelocity ?? 0);
+    const sessionAggs: SessionAgg[] = sessions.map((s: any) => {
+      const scores = s.metrics.map((m: any) => m.algorithmScore ?? 0);
+      const engagementRates = s.metrics.map((m: any) => m.engagementRate ?? 0);
+      const retentionRates = s.metrics.map((m: any) => m.retentionRate ?? 0);
+      const engagementVelocities = s.metrics.map(
+        (m: any) => m.engagementVelocity ?? 0
+      );
 
       const lastMetric = s.metrics.at(-1);
 
@@ -78,9 +80,13 @@ export async function GET() {
     });
 
     // Semua score untuk global
-    const allScores = sessionAggs.flatMap((s) => s.scores).filter((v) => v > 0);
+    const allScores = sessionAggs
+      .flatMap((s: SessionAgg) => s.scores)
+      .filter((v) => v > 0);
     const totalSessions = sessions.length;
-    const totalAccounts = new Set(sessions.map((s) => s.username)).size;
+    const totalAccounts = new Set(
+      sessions.map((s: any) => s.username)
+    ).size;
     const avgScoreAll =
       allScores.reduce((sum, v) => sum + v, 0) / (allScores.length || 1);
     const bestScoreOverall = allScores.length
@@ -89,9 +95,9 @@ export async function GET() {
     const medianScore = computeMedian(allScores);
 
     // Faktor global (sangat sederhana: rata-rata normalized 0-100)
-    const allEng = sessionAggs.flatMap((s) => s.engagementRates);
-    const allRet = sessionAggs.flatMap((s) => s.retentionRates);
-    const allVel = sessionAggs.flatMap((s) => s.engagementVelocities);
+    const allEng = sessionAggs.flatMap((s: SessionAgg) => s.engagementRates);
+    const allRet = sessionAggs.flatMap((s: SessionAgg) => s.retentionRates);
+    const allVel = sessionAggs.flatMap((s: SessionAgg) => s.engagementVelocities);
 
     const engagementFactor = normalizeTo100(
       average(allEng),
@@ -118,7 +124,9 @@ export async function GET() {
 
     const accounts = Array.from(byUsername.entries()).map(
       ([username, sess]) => {
-        const allSessScores = sess.flatMap((s) => s.scores).filter((v) => v > 0);
+        const allSessScores = sess
+          .flatMap((s: SessionAgg) => s.scores)
+          .filter((v) => v > 0);
         const avgScore =
           allSessScores.reduce((sum, v) => sum + v, 0) /
           (allSessScores.length || 1);
